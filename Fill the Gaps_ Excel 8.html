@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fill the Gaps: Excel 8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,800;6..12,900&display=swap" rel="stylesheet">
+<style>
+/* Same world as the slides: steppe sunset (indigo sky, sun, violet hills), white cards. Single theme on purpose. */
+:root{
+  --ink:#1E1B4B; --deep:#2E2A78; --violet:#6D5DF5; --coral:#FF7A5C; --mint:#1FBF9F; --sun:#FFC23D;
+  --lav:#F4F2FF; --muted:#6B6F8A; --white:#FFFFFF; --red:#E5484D;
+  --font:"Nunito Sans", Calibri, "Segoe UI", system-ui, sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:var(--font);color:var(--ink);background:var(--lav);font-size:17px;line-height:1.5}
+.hero{position:relative;overflow:hidden;color:var(--white);padding:28px 20px 96px;
+  background:linear-gradient(180deg,#1E1B4B 0%,#3B2F95 60%,#8C5BD6 100%)}
+.hero .sun{position:absolute;right:-30px;top:30px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle at 50% 35%,#FFD66B,#FF7A5C);box-shadow:0 0 60px 20px rgba(255,194,61,.35)}
+.hero svg{position:absolute;left:0;bottom:-1px;width:100%;height:90px;display:block}
+.hero-in{position:relative;max-width:640px;margin:0 auto}
+.pill{display:inline-block;background:var(--coral);color:var(--white);font-weight:800;font-size:12px;letter-spacing:.08em;
+  padding:5px 12px;border-radius:999px}
+h1{font-size:clamp(30px,7vw,44px);line-height:1.08;margin:14px 0 8px;font-weight:900;text-wrap:balance}
+.hero p{margin:0;color:#DCD8FF;max-width:44ch}
+main{max-width:640px;margin:-56px auto 0;padding:0 16px 48px;position:relative}
+.card{background:var(--white);border-radius:20px;box-shadow:0 10px 30px rgba(30,27,75,.12);padding:24px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.between{justify-content:space-between}
+label{font-weight:800}
+input[type=text]{font:inherit;color:var(--ink);border:2px solid #E1DEFF;border-radius:12px;padding:12px 14px;width:100%;background:var(--lav)}
+input[type=text]:focus,button:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.btn{border:0;border-radius:14px;padding:14px 22px;font-weight:900;font-size:18px;background:var(--violet);color:var(--white);box-shadow:0 6px 16px rgba(109,93,245,.35)}
+.btn.sun{background:var(--sun);color:var(--ink);box-shadow:0 6px 16px rgba(255,194,61,.4)}
+.btn.ghost{background:var(--lav);color:var(--ink);box-shadow:none}
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 20px}
+.rule{background:var(--lav);border-radius:14px;padding:12px;text-align:center;font-size:14px;color:var(--muted)}
+.rule b{display:block;font-size:24px;color:var(--ink)}
+.rule:nth-child(1) b{color:var(--violet)} .rule:nth-child(2) b{color:var(--coral)} .rule:nth-child(3) b{color:var(--mint)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.dots{display:flex;gap:6px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:50%;background:#E1DEFF}
+.dot.now{background:var(--violet)} .dot.ok{background:var(--mint)} .dot.no{background:var(--coral)}
+.timer{font-weight:900;font-variant-numeric:tabular-nums;background:var(--ink);color:var(--sun);border-radius:999px;padding:4px 12px;font-size:15px}
+.timer.low{background:var(--coral);color:var(--white)}
+.part{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.sentence{font-size:clamp(21px,5vw,26px);font-weight:700;line-height:1.35;margin:10px 0 22px;text-wrap:pretty}
+.gap{display:inline-block;min-width:110px;text-align:center;border-bottom:3px solid var(--sun);color:var(--violet);padding:0 6px}
+.gap.ok{color:var(--mint);border-color:var(--mint)} .gap.no{color:var(--coral);border-color:var(--coral)}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.chip{border:2px solid #E1DEFF;background:var(--white);color:var(--ink);border-radius:14px;padding:14px 8px;font-weight:800;font-size:17px}
+.chip:hover:not(:disabled){border-color:var(--violet)}
+.chip.ok{background:var(--mint);border-color:var(--mint);color:var(--white)}
+.chip.no{background:var(--coral);border-color:var(--coral);color:var(--white)}
+.chip:disabled{cursor:default}
+.fb{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--lav);font-size:15px;display:none}
+.fb.on{display:block}
+.fb b{font-weight:900}
+.next{margin-top:16px;width:100%}
+.score{font-size:64px;font-weight:900;line-height:1;color:var(--violet)}
+.score small{font-size:26px;color:var(--muted)}
+.msg{font-size:20px;font-weight:800;margin:8px 0 18px}
+.review{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:8px}
+.review li{background:var(--lav);border-radius:12px;padding:10px 12px;font-size:15px}
+.review li b{color:var(--mint)} .review li.miss b{color:var(--coral)}
+.hidden{display:none}
+footer{text-align:center;color:var(--muted);font-size:13px;margin-top:22px}
+@media (max-width:420px){.chips{grid-template-columns:1fr}.rules{grid-template-columns:1fr 1fr 1fr}}
+@media (prefers-reduced-motion:no-preference){.chip,.btn{transition:transform .1s,background .15s}.btn:active,.chip:active:not(:disabled){transform:scale(.97)}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="sun" aria-hidden="true"></div>
+  <div class="hero-in">
+    <span class="pill">GAME · 2 MINUTES</span>
+    <h1>Fill the Gaps</h1>
+    <p>Ten sentences from our presentation about <em>Excel for Kazakhstan, Grade 8</em>. Tap the missing word.</p>
+  </div>
+  <svg viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 40 C 240 10, 480 20, 720 45 S 1200 70, 1440 30 L1440 90 L0 90 Z" fill="#6D5DF5" opacity=".85"/>
+    <path d="M0 65 C 300 40, 700 85, 1000 60 S 1300 50, 1440 65 L1440 90 L0 90 Z" fill="#F4F2FF"/>
+  </svg>
+</header>
+
+<main>
+  <!-- START -->
+  <section class="card" id="start">
+    <label for="name">Your name</label>
+    <div style="margin-top:8px"><input type="text" id="name" maxlength="24" placeholder="e.g. Aigerim"></div>
+    <div class="rules">
+      <div class="rule"><b>10</b>sentences</div>
+      <div class="rule"><b>3</b>options each</div>
+      <div class="rule"><b>2:00</b>minutes</div>
+    </div>
+    <button class="btn" id="go" style="width:100%">Start the game</button>
+  </section>
+
+  <!-- PLAY -->
+  <section class="card hidden" id="play">
+    <div class="top">
+      <div class="dots" id="dots"></div>
+      <span class="timer" id="timer">2:00</span>
+    </div>
+    <div class="part" id="part"></div>
+    <p class="sentence" id="sentence"></p>
+    <div class="chips" id="chips"></div>
+    <div class="fb" id="fb"></div>
+    <button class="btn next hidden" id="next">Next</button>
+  </section>
+
+  <!-- END -->
+  <section class="card hidden" id="end">
+    <div class="part" id="who"></div>
+    <div class="score" id="score"></div>
+    <p class="msg" id="msg"></p>
+    <div class="row">
+      <button class="btn sun" id="again">Play again</button>
+      <button class="btn ghost" id="showRev">See the answers</button>
+    </div>
+    <ul class="review hidden" id="review"></ul>
+  </section>
+
+  <footer>Tamerlan · Razana · Dariya · Work with the Textbook and Teaching Materials</footer>
+</main>
+
+<script>
+(function(){
+  var Q=[
+    {p:"Part 1 · Tamerlan",a:"By national standards, school leavers should reach level ",b:" on the CEFR scale.",o:["A2","B2","C1"],c:"B2",e:"The target is B2, and it is not yet being met."},
+    {p:"Part 1 · Tamerlan",a:"In the EF English Proficiency Index 2024, Kazakhstan ranked ",b:" out of 116 countries.",o:["13th","53rd","103rd"],c:"103rd",e:"Kazakhstan was 103rd out of 116."},
+    {p:"Part 1 · Tamerlan",a:"42.9% of teachers said there is a lack of culturally ",b:" material.",o:["relevant","difficult","digital"],c:"relevant",e:"Teachers want more local, culturally relevant content."},
+    {p:"Part 1 · Tamerlan",a:"Language policy decisions were made top-",b:", without teachers.",o:["down","up","level"],c:"down",e:"Imanova et al. (2025): top-down, not bottom-up."},
+    {p:"Part 2 · Razana",a:"Cunningsworth says we evaluate a textbook before, during and ",b:" use.",o:["after","without","instead of"],c:"after",e:"Pre-use, in-use and post-use evaluation."},
+    {p:"Part 2 · Razana",a:"Teaching the key words before reading the text is called ",b:".",o:["deleting","reordering","adding"],c:"reordering",e:"Changing the sequence of tasks is reordering."},
+    {p:"Part 2 · Razana",a:"Giving weaker learners a word bank is called ",b:".",o:["simplifying","modifying","deleting"],c:"simplifying",e:"The task stays the same but becomes easier to do."},
+    {p:"Part 2 · Razana",a:"A news text about the ",b:" antelope makes Module 1 more local.",o:["snow","saiga","desert"],c:"saiga",e:"From about 48,000 (2005) to about 1.9 million in Kazakhstan."},
+    {p:"Part 3 · Dariya",a:"Every digital activity needs a ",b:" version.",o:["online","video","paper"],c:"paper",e:"Not every school has good internet, so keep a plan B."},
+    {p:"Part 3 · Dariya",a:"A textbook is a ",b:", not a script.",o:["map","menu","test"],c:"map",e:"It shows the way, but the teacher chooses the route."}
+  ];
+  var $=function(id){return document.getElementById(id)};
+  var i=0,score=0,answers=[],left=120,tid=null,done=false;
+  function show(id){["start","play","end"].forEach(function(x){$(x).classList.toggle("hidden",x!==id)})}
+  function fmt(s){return Math.floor(s/60)+":"+("0"+(s%60)).slice(-2)}
+  function dots(){var d=$("dots");d.innerHTML="";Q.forEach(function(_,k){var s=document.createElement("span");s.className="dot"+(k===i&&!answers[k]?" now":"")+(answers[k]?(answers[k].ok?" ok":" no"):"");d.appendChild(s)})}
+  function render(){
+    var q=Q[i];dots();
+    $("part").textContent="Sentence "+(i+1)+" of "+Q.length+" · "+q.p;
+    $("sentence").innerHTML="";
+    $("sentence").appendChild(document.createTextNode(q.a));
+    var g=document.createElement("span");g.className="gap";g.id="gap";g.textContent="?";$("sentence").appendChild(g);
+    $("sentence").appendChild(document.createTextNode(q.b));
+    var ch=$("chips");ch.innerHTML="";
+    q.o.forEach(function(o){var b=document.createElement("button");b.type="button";b.className="chip";b.textContent=o;b.addEventListener("click",function(){pick(b,o)});ch.appendChild(b)});
+    $("fb").className="fb";$("next").classList.add("hidden");
+  }
+  function pick(btn,o){
+    var q=Q[i],ok=o===q.c;
+    answers[i]={ok:ok,pick:o};if(ok)score++;
+    Array.prototype.forEach.call($("chips").children,function(b){b.disabled=true;if(b.textContent===q.c)b.classList.add("ok")});
+    if(!ok)btn.classList.add("no");
+    var g=$("gap");g.textContent=q.c;g.className="gap "+(ok?"ok":"no");
+    $("fb").innerHTML=(ok?"<b>Correct!</b> ":"<b>Not quite.</b> ")+q.e;$("fb").className="fb on";
+    $("next").textContent=i===Q.length-1?"See my score":"Next";$("next").classList.remove("hidden");$("next").focus();
+    dots();
+  }
+  function finish(){
+    if(done)return;done=true;clearInterval(tid);
+    var nm=$("name").value.trim();
+    $("who").textContent=nm?nm+"'s score":"Your score";
+    $("score").innerHTML=score+"<small> / "+Q.length+"</small>";
+    $("msg").textContent=score===10?"Perfect! You were really listening.":score>=8?"Excellent work!":score>=5?"Good job! Check the answers below.":"Nice try! Have a look at the answers.";
+    var r=$("review");r.innerHTML="";
+    Q.forEach(function(q,k){var li=document.createElement("li");var a=answers[k];if(!a||!a.ok)li.className="miss";
+      li.innerHTML="";li.appendChild(document.createTextNode(q.a));var b=document.createElement("b");b.textContent=q.c;li.appendChild(b);li.appendChild(document.createTextNode(q.b+(a?"":" (no answer)")));r.appendChild(li)});
+    r.classList.add("hidden");$("showRev").textContent="See the answers";
+    show("end");
+  }
+  $("next").addEventListener("click",function(){i++;if(i<Q.length)render();else finish()});
+  function start(){
+    i=0;score=0;answers=[];left=120;done=false;$("timer").textContent="2:00";$("timer").classList.remove("low");
+    show("play");render();
+    clearInterval(tid);tid=setInterval(function(){left--;$("timer").textContent=fmt(Math.max(left,0));if(left<=20)$("timer").classList.add("low");if(left<=0)finish()},1000);
+  }
+  $("go").addEventListener("click",start);
+  $("again").addEventListener("click",start);
+  $("showRev").addEventListener("click",function(){var r=$("review");r.classList.toggle("hidden");$("showRev").textContent=r.classList.contains("hidden")?"See the answers":"Hide the answers"});
+  try{var n=localStorage.getItem("ftg-name");if(n)$("name").value=n}catch(e){}
+  $("name").addEventListener("input",function(){try{localStorage.setItem("ftg-name",$("name").value)}catch(e){}});
+})();
+</script>
+</body>
+</html>
